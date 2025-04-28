@@ -11,13 +11,22 @@ __doc__ = """
     ssh git setup
 """
 # 1. USE ONLY CORE PYTHON MODULES
-# 2. HANDLES *ONLY* -i and -u FLAGS INDEPENDENTLY
 # 3. HANDLES MODULE ERRORS (-s TO STOP ON FIRST ERROR)
 # 4. IMPORTANT! PROPPER LOGGING OF DATA
 # 5. IF PATH IS IMPORTANT MAKE SURE TO VERIFY(FOR EXAMPLE MUST BE IN $HOME/archlinux)
-# 6. --help flag
 # 7. IMPORTANT! PRESENTS SUMMARY BEFORE EXECUTING TASKS AND ASKS Y/N TO CONTINUE
 # 8. -200 lines
+
+# - os.path.realpath(os.curdir) -> gives current script path
+# - os.fwalk(path) -> gives a list of dirs and files of path
+# however the first instnace is always a "summary" of the root folder
+# can hack this in a way where we skip summary by doing x.__next__() befor iter
+# To make a quick summary of found modules we can do x.__next__()[1] on first iter
+# and that would make use of the summary AND get rid of the summary at the same time
+
+# BACKUP = if backup flag passed, a backup should be done before & after runtime
+# Backup saves should be saved like 'BEFORE/AFTER-MANAGER:date'
+# however if its a new instance and timeshift is not installed, it should just ignore
 
 import sys
 import logging
@@ -36,13 +45,13 @@ class ScriptParams:
     class Action(Enum): # Listed in priority order
         INSTALL = 1
         UPDATE = 2
-        BACKUP = 3
 
-    def __init__(self, actions:list[Action], ignore_errors:bool = False) -> None:
+    def __init__(self, actions:list[Action], ignore_errors:bool = False, backup:bool = False) -> None:
         self.actions = actions
         if len(self.actions) == 0:
             raise Exception("No actions were provided")
         self.ignore_errors = ignore_errors 
+        self.backup = backup
 
     def __repr__(self) -> str: #DEBUG
         return f"<ScriptParams actions={self.actions} ignore_errors={self.ignore_errors}>"
@@ -58,9 +67,8 @@ def parse_args() -> ScriptParams:
     actions = list[ScriptParams.Action]()
     if args.install: actions.append(ScriptParams.Action.INSTALL)
     if args.update: actions.append(ScriptParams.Action.UPDATE)
-    if args.backup: actions.append(ScriptParams.Action.BACKUP)
 
-    return ScriptParams(actions, args.force)
+    return ScriptParams(actions, args.force, args.backup)
 
 def ask_yes_no(prompt: str) -> bool:
     return input(prompt + " (y/n): ").strip().lower() in ("y", "yes")
@@ -75,8 +83,11 @@ if __name__ == "__main__":
         sys.exit(1)
     
     # TODO: get all modules and then list everything (with `ignored_modules`) and ask_yes_no
-    logger.info("------ Parsed Arguments Summary " + "-"*90)
+    logger.info("------ Parsed Arguments Summary " + "-"*50)
     logger.info(f"Actions received: {sp.actions}")
     logger.info(f"Ignoring errors ? {sp.ignore_errors}")
-    logger.info("-"*(32+90))
+    logger.info(f"Backing up      ? {sp.backup}")
+    logger.info("-"*(32+50))
+
+
 
