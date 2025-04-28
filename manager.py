@@ -7,20 +7,76 @@ __doc__ = """
     python3 manager.py -{i/u} -s
 
     - Requirements:
-    python3.13
+    python3.8+
     ssh git setup
 """
-
-import logging
-
 # 1. USE ONLY CORE PYTHON MODULES
 # 2. HANDLES *ONLY* -i and -u FLAGS INDEPENDENTLY
 # 3. HANDLES MODULE ERRORS (-s TO STOP ON FIRST ERROR)
 # 4. IMPORTANT! PROPPER LOGGING OF DATA
 # 5. IF PATH IS IMPORTANT MAKE SURE TO VERIFY(FOR EXAMPLE MUST BE IN $HOME/archlinux)
 # 6. --help flag
-# 7. VERIFICATION BEFORE DOING TASKS(summary of flags passed and y/n question)
+# 7. IMPORTANT! PRESENTS SUMMARY BEFORE EXECUTING TASKS AND ASKS Y/N TO CONTINUE
 # 8. -200 lines
 
-# d1. Python 3.13+ full support
+import sys
+import logging
+logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(funcName)s:%(lineno)s - %(message)s')
+
+from argparse import ArgumentParser
+from enum import Enum
+
+# globals
+ignored_modules = []
+parser = ArgumentParser(prog="ArchManagerPY")
+logger = logging.getLogger(__name__)
+
+# Class to handle script args
+class ScriptParams:
+    class Action(Enum): # Listed in priority order
+        INSTALL = 1
+        UPDATE = 2
+        BACKUP = 3
+
+    def __init__(self, actions:list[Action], ignore_errors:bool = False) -> None:
+        self.actions = actions
+        if len(self.actions) == 0:
+            raise Exception("No actions were provided")
+        self.ignore_errors = ignore_errors 
+
+    def __repr__(self) -> str: #DEBUG
+        return f"<ScriptParams actions={self.actions} ignore_errors={self.ignore_errors}>"
+
+def parse_args() -> ScriptParams:
+    parser.add_argument("-i", "--install", help="install action flag", action="store_true")
+    parser.add_argument("-u", "--update", help="update action flag", action="store_true")
+    parser.add_argument("-b", "--backup", help="backup action flag", action="store_true")
+    parser.add_argument("-f", "--force", help="force, ignoring errors flag", action="store_true")
+    args = parser.parse_args()
+
+    # Processing should be done in the priority order(FIFO).
+    actions = list[ScriptParams.Action]()
+    if args.install: actions.append(ScriptParams.Action.INSTALL)
+    if args.update: actions.append(ScriptParams.Action.UPDATE)
+    if args.backup: actions.append(ScriptParams.Action.BACKUP)
+
+    return ScriptParams(actions, args.force)
+
+def ask_yes_no(prompt: str) -> bool:
+    return input(prompt + " (y/n): ").strip().lower() in ("y", "yes")
+
+if __name__ == "__main__":
+    logger.info("Initializing ArchManagerPY...")
+    try:
+        sp = parse_args()
+    except Exception as e:
+        logger.error(e)
+        parser.print_help()
+        sys.exit(1)
+    
+    # TODO: get all modules and then list everything (with `ignored_modules`) and ask_yes_no
+    logger.info("------ Parsed Arguments Summary " + "-"*90)
+    logger.info(f"Actions received: {sp.actions}")
+    logger.info(f"Ignoring errors ? {sp.ignore_errors}")
+    logger.info("-"*(32+90))
 
