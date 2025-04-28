@@ -38,7 +38,7 @@ from argparse import ArgumentParser
 from enum import Enum
 
 # globals
-ignored_modules = ["nvim"]
+ignored_modules = []
 parser = ArgumentParser(prog="ArchManagerPY")
 logger = logging.getLogger(__name__)
 managerpy_directory = os.path.realpath(os.curdir)
@@ -57,8 +57,8 @@ class ScriptParams:
         self.ignore_errors = ignore_errors 
         self.backup = backup
 
-    def __repr__(self) -> str: #DEBUG
-        return f"<ScriptParams actions={self.actions} ignore_errors={self.ignore_errors}>"
+    def __repr__(self) -> str: # DEBUG
+        return f"<ScriptParams actions={self.actions} ignore_errors={self.ignore_errors} backup={self.backup}>"
 
 def parse_args() -> ScriptParams:
     parser.add_argument("-i", "--install", help="install action flag", action="store_true")
@@ -75,6 +75,8 @@ def parse_args() -> ScriptParams:
     return ScriptParams(actions, args.force, args.backup)
 
 # Override of List.__subt__
+# TODO: If .__contains__ does a full loop through the list(On) this will be On^2
+# To make this func On, use exception based removal
 def list_subt_override(list1: list, list2: list) -> list:
     flist = copy.copy(list1)
     for x in flist:
