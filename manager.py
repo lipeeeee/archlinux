@@ -3,38 +3,36 @@ __doc__ = """
     
     - Handles installing new instances, updating modules & system maintenance.
 
+    - This script revolves around 2 actions(INSTALL and UPDATE) and adapting to arguments given
+    INSTALL: will setup modules for the first time and symlink 
+    UPDATE:  handle updates inplace for modules
+
     - How to run:
-    python3 manager.py -{i/u} -s
+    python3 manager.py -{i/u} -bf
 
     - Requirements:
     python3.8+
     ssh git setup
 """
+
 # 1. USE ONLY CORE PYTHON MODULES
-# 3. HANDLES MODULE ERRORS (-s TO STOP ON FIRST ERROR)
-# 4. IMPORTANT! PROPPER LOGGING OF DATA
-# 5. IF PATH IS IMPORTANT MAKE SURE TO VERIFY(FOR EXAMPLE MUST BE IN $HOME/archlinux)
-# 7. IMPORTANT! PRESENTS SUMMARY BEFORE EXECUTING TASKS AND ASKS Y/N TO CONTINUE
-# 8. -200 lines
-# 9. ignored_modules as arg? -y as do it anyway flag?
+# 2. HANDLES MODULE ERRORS (-s TO STOP ON FIRST ERROR)
+# 3. IMPORTANT! PROPPER LOGGING OF DATA
+# 4. IF PATH IS IMPORTANT MAKE SURE TO VERIFY(FOR EXAMPLE MUST BE IN $HOME/archlinux)
+# 5. -200 lines
+# 6. ignored_modules as arg? -y as do it anyway flag?
 
-# - os.path.realpath(os.curdir) -> gives current script path
-# - os.fwalk(path) -> gives a list of dirs and files of path
-# however the first instnace is always a "summary" of the root folder
-# can hack this in a way where we skip summary by doing x.__next__() befor iter
-# To make a quick summary of found modules we can do x.__next__()[1] on first iter
-# and that would make use of the summary AND get rid of the summary at the same time
+# if its a new instance and timeshift is not installed, it should just ignore
 
-# BACKUP = if backup flag passed, a backup should be done before & after runtime
-# Backup saves should be saved like 'PRE/POST-MANAGER:$date'
-# however if its a new instance and timeshift is not installed, it should just ignore
+# make __doc__ better
 
 import sys, os
-import copy
+import copy, subprocess
 import logging
-logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(funcName)s:%(lineno)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(funcName)s - %(message)s')
 
 from argparse import ArgumentParser
+from datetime import datetime
 from enum import Enum
 
 # globals
@@ -63,7 +61,7 @@ class ScriptParams:
 def parse_args() -> ScriptParams:
     parser.add_argument("-i", "--install", help="install action flag", action="store_true")
     parser.add_argument("-u", "--update", help="update action flag", action="store_true")
-    parser.add_argument("-b", "--backup", help="backup action flag", action="store_true")
+    parser.add_argument("-b", "--backup", help="backup flag", action="store_true")
     parser.add_argument("-f", "--force", help="force, ignoring errors flag", action="store_true")
     args = parser.parse_args()
 
@@ -74,17 +72,38 @@ def parse_args() -> ScriptParams:
 
     return ScriptParams(actions, args.force, args.backup)
 
-# Override of List.__subt__
-# TODO: If .__contains__ does a full loop through the list(On) this will be On^2
-# To make this func On, use exception based removal
+# Override of List.__subt__ (returns list1 - list2)
+# List.__subt__ (On), without __contains__ that would make algorithm (On^2)
 def list_subt_override(list1: list, list2: list) -> list:
     flist = copy.copy(list1)
-    for x in flist:
-        if list2.__contains__(x): flist.remove(x)
+    for x in list2:
+        try:
+            flist.remove(x)
+        except ValueError: # Means value didnt exist in list1
+            continue
     return flist
+
+def do_action(sp: ScriptParams, original_module_generator, file_to_execute: str) -> int:
+    ...
+
+def action_install(sp: ScriptParams, original_module_generator) -> int:
+    # module_generator = copy.copy(original_module_generator) # keep original intact
+
+    # for root, dirs, 
+    ...
+
+def action_update(sp: ScriptParams, original_module_generator) -> int:
+    ...
+
+def make_backup(message: str) -> bool:
+    print(message)
+    return True
 
 def ask_yes_no(prompt: str) -> bool:
     return input(prompt + " (y/n): ").strip().lower() in ("y", "yes")
+
+def print_separator(message: str, width: int = 60, sep: str = '=') -> None:
+    logger.info(f" {message} ".center(width, sep))
 
 if __name__ == "__main__":
     logger.info("Initializing ArchManagerPY...")
@@ -96,24 +115,45 @@ if __name__ == "__main__":
     # Script params
     try:
         sp = parse_args()
-    except Exception as e:
-        logger.error(e)
+    except Exception as e: 
+        logger.error(e) # There can exist multiple failing logic so we just print the Exception 
         parser.print_help()
         sys.exit(1)
 
     found_modules:list[str] = modules_gen.__next__()[1]
     affected_modules:list[str] = list_subt_override(found_modules, ignored_modules)
     
-    # TODO: get all modules and then list everything (with `ignored_modules`) and ask_yes_no
-    logger.info("------ Parsed Arguments Summary " + "-"*32)
+    print_separator("Parsed Arguments Summary")
     logger.info(f"Actions received\t: {sp.actions}")
     logger.info(f"Ignoring errors\t? {sp.ignore_errors}")
     logger.info(f"Backing up     \t? {sp.backup}")
-    logger.info("------ Modules Summary " + "-"*(64-23))
+    print_separator("Modules Summary")
     logger.info(f"Found modules\t: {found_modules}")
     logger.info(f"Ignored modules\t: {ignored_modules}")
     logger.info(f"Will be affected\t: {affected_modules}")
-    logger.info("-"*(32+32))
+    logger.info("-"*(28))
     if not ask_yes_no("Do you agree with the shown information?"):
         sys.exit(0)
+    subprocess.call("clear")
+
+    # Begin actual process
+    # 1. Initial backup
+    if sp.backup:
+        print_separator("Making Pre-Actions Backup")
+        logger.info(f"Backup made? {make_backup(f'PRE-ACTIONS: Backup made by ArchManagerPY')}")
+
+    # 2. Instalation
+    if ScriptParams.Action.INSTALL in sp.actions:
+        print_separator("Running INSTALL Action")
+        ...
+
+    # 3. Update
+    if ScriptParams.Action.UPDATE in sp.actions:
+        print_separator("Running UPDATE Action")
+        ...
+
+    # 4. Final backup
+    if sp.backup:
+        print_separator("Making Post-Actions Backup")
+        logger.info(f"Backup made? {make_backup(f'POST-ACTIONS: Backup made by ArchManagerPY')}")
 
