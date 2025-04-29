@@ -17,12 +17,13 @@ __doc__ = """
 
 # 1. USE ONLY CORE PYTHON MODULES
 # 2. HANDLES MODULE ERRORS (-s TO STOP ON FIRST ERROR)
-# 3. IMPORTANT! PROPPER LOGGING OF DATA
-# 4. IF PATH IS IMPORTANT MAKE SURE TO VERIFY(FOR EXAMPLE MUST BE IN $HOME/archlinux)
-# 5. -200 lines
-# 6. ignored_modules as arg? -y as do it anyway flag?
+# 3. -200 lines
+# 4. ignored_modules as arg? -y as do it anyway flag?
 
 # if its a new instance and timeshift is not installed, it should just ignore
+
+# ! research bash script base skeleton for scripts (scripts/ and install.sh, update.sh in each module) !
+# make backup/snapshot script that takes $1 arg as --comment $2 as stop flag
 
 # make __doc__ better
 
@@ -41,6 +42,7 @@ parser = ArgumentParser(prog="ArchManagerPY")
 logger = logging.getLogger(__name__)
 managerpy_directory = os.path.realpath(os.curdir)
 managerpy_modules_path = os.path.join(managerpy_directory, "modules/")
+managerpy_scripts_path = os.path.join(managerpy_directory, "scripts/")
 
 # Class to handle script args
 class ScriptParams:
@@ -96,7 +98,6 @@ def action_update(sp: ScriptParams, original_module_generator) -> int:
     ...
 
 def make_backup(message: str) -> bool:
-    print(message)
     return True
 
 def ask_yes_no(prompt: str) -> bool:
@@ -106,13 +107,12 @@ def print_separator(message: str, width: int = 60, sep: str = '=') -> None:
     logger.info(f" {message} ".center(width, sep))
 
 if __name__ == "__main__":
+    assert os.path.isdir(managerpy_modules_path), f"Could not find modules folder in {managerpy_directory}"
+    assert os.path.isdir(managerpy_scripts_path), f"Could not find scripts folder in {managerpy_directory}"
     logger.info("Initializing ArchManagerPY...")
 
-    # Modules directory gen
-    assert os.path.isdir(managerpy_modules_path), f"Could not find modules folder in {managerpy_directory}"
+    # Get modules generator(modules_gen) and script params(sp)
     modules_gen = os.fwalk(managerpy_modules_path)
-
-    # Script params
     try:
         sp = parse_args()
     except Exception as e: 
