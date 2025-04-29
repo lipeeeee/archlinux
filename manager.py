@@ -15,6 +15,8 @@ __doc__ = """
     ssh git setup
 """
 
+# Warning: On git clone, files might not have the permissions set correctly
+
 # 1. USE ONLY CORE PYTHON MODULES
 # 2. HANDLES MODULE ERRORS (-s TO STOP ON FIRST ERROR)
 # 3. -200 lines
@@ -28,12 +30,13 @@ __doc__ = """
 # make __doc__ better
 
 import sys, os
-import copy, subprocess
+import itertools
+import subprocess
 import logging
+from typing import Iterator
 logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(funcName)s - %(message)s')
 
 from argparse import ArgumentParser
-from datetime import datetime
 from enum import Enum
 
 # globals
@@ -64,7 +67,7 @@ def parse_args() -> ScriptParams:
     parser.add_argument("-i", "--install", help="install action flag", action="store_true")
     parser.add_argument("-u", "--update", help="update action flag", action="store_true")
     parser.add_argument("-b", "--backup", help="backup flag", action="store_true")
-    parser.add_argument("-f", "--force", help="force, ignoring errors flag", action="store_true")
+    parser.add_argument("--ignore-errors", help="force, ignoring errors flag", action="store_true")
     args = parser.parse_args()
 
     # Processing should be done in the priority order(FIFO).
@@ -72,30 +75,24 @@ def parse_args() -> ScriptParams:
     if args.install: actions.append(ScriptParams.Action.INSTALL)
     if args.update: actions.append(ScriptParams.Action.UPDATE)
 
-    return ScriptParams(actions, args.force, args.backup)
+    return ScriptParams(actions, args.ignore_errors, args.backup)
 
-# Override of List.__subt__ (returns list1 - list2)
-# List.__subt__ (On), without __contains__ that would make algorithm (On^2)
-def list_subt_override(list1: list, list2: list) -> list:
-    flist = copy.copy(list1)
-    for x in list2:
-        try:
-            flist.remove(x)
-        except ValueError: # Means value didnt exist in list1
+def do_action(sp: ScriptParams, module_generator:Iterator, ignored_modules: list[str], file_to_execute: str) -> int:
+    modules_affected = 0
+    for root, dirs, files, rootfd in module_generator:
+        module_name = root.split('/')[-1]
+        if module_name in ignored_modules:
+            logger.warning(f"Ignoring {module_name}. Present in ignore list")
             continue
-    return flist
+        file_path = os.path.join(root, file_to_execute)
+        if not os.path.isfile(file_path):
+            logger.warning(f"Ignoring {module_name}. Does not have {file_to_execute}")
+            continue
 
-def do_action(sp: ScriptParams, original_module_generator, file_to_execute: str) -> int:
-    ...
+        # If we reached this line it means all is ok to run the `file_to_execute` script
+        subprocess.run([file_path], shell=True, check=not sp.ignore_errors)
 
-def action_install(sp: ScriptParams, original_module_generator) -> int:
-    # module_generator = copy.copy(original_module_generator) # keep original intact
-
-    # for root, dirs, 
-    ...
-
-def action_update(sp: ScriptParams, original_module_generator) -> int:
-    ...
+    return modules_affected
 
 def make_backup(message: str) -> bool:
     return True
@@ -113,24 +110,22 @@ if __name__ == "__main__":
 
     # Get modules generator(modules_gen) and script params(sp)
     modules_gen = os.fwalk(managerpy_modules_path)
+    install_gen, update_gen = itertools.tee(modules_gen) # We have to make copies of the original generator
+    found_modules:list[str] = modules_gen.__next__()[1]
     try:
         sp = parse_args()
     except Exception as e: 
         logger.error(e) # There can exist multiple failing logic so we just print the Exception 
         parser.print_help()
         sys.exit(1)
-
-    found_modules:list[str] = modules_gen.__next__()[1]
-    affected_modules:list[str] = list_subt_override(found_modules, ignored_modules)
     
     print_separator("Parsed Arguments Summary")
     logger.info(f"Actions received\t: {sp.actions}")
     logger.info(f"Ignoring errors\t? {sp.ignore_errors}")
     logger.info(f"Backing up     \t? {sp.backup}")
     print_separator("Modules Summary")
-    logger.info(f"Found modules\t: {found_modules}")
+    logger.info(f"Found modules \t: {found_modules}")
     logger.info(f"Ignored modules\t: {ignored_modules}")
-    logger.info(f"Will be affected\t: {affected_modules}")
     logger.info("-"*(28))
     if not ask_yes_no("Do you agree with the shown information?"):
         sys.exit(0)
@@ -145,12 +140,12 @@ if __name__ == "__main__":
     # 2. Instalation
     if ScriptParams.Action.INSTALL in sp.actions:
         print_separator("Running INSTALL Action")
-        ...
+        do_action(sp, install_gen, ignored_modules, "install.sh")
 
     # 3. Update
     if ScriptParams.Action.UPDATE in sp.actions:
         print_separator("Running UPDATE Action")
-        ...
+        do_action(sp, update_gen, ignored_modules, "update.sh")
 
     # 4. Final backup
     if sp.backup:
