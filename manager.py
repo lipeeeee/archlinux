@@ -44,7 +44,7 @@ from argparse import ArgumentParser
 from enum import Enum
 
 # globals
-ignored_modules = []
+ignored_modules = ["tmux"]
 parser = ArgumentParser(prog="ArchManagerPY")
 logger = logging.getLogger(__name__)
 managerpy_directory = os.path.realpath(os.curdir)
@@ -126,7 +126,13 @@ if __name__ == "__main__":
 
     # Get modules generator(modules_gen) and script params(sp)
     modules_gen = os.fwalk(managerpy_modules_path)
-    module_dirs = [d for d, _, _ in os.walk(managerpy_modules_path)]
+    module_dirs = [
+        os.path.join(managerpy_modules_path, name)
+        for name in os.listdir(managerpy_modules_path)
+        if os.path.isdir(os.path.join(managerpy_modules_path, name))
+    ]
+    # ensure 'system' module runs first if there is one
+    module_dirs = sorted(module_dirs, key=lambda d: os.path.basename(d) != "system")
     found_modules:list[str] = modules_gen.__next__()[1]
     try:
         sp = parse_args()

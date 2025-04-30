@@ -1,0 +1,30 @@
+#!/bin/bash
+# tmux-sessionizer, create & attatch to tmux sessions easily 
+
+if [[ $# -eq 1 ]]; then
+  selected=$1
+else
+  selected=$(find ~ $DEV -mindepth 1 -maxdepth 1 -type d | fzf)
+fi
+
+if [[ -z $selected ]]; then
+    exit 0
+fi
+
+selected_name=$(basename "$selected" | tr . _)
+
+# Check session
+if tmux has-session -t=$selected_name 2> /dev/null; then
+  tmux_has_session=true
+fi
+
+if [[ ! $tmux_has_session ]]; then
+  tmux new-session -s $selected_name -c $selected
+else
+  if [[ -n $TMUX ]]; then
+    tmux switch-client -t $selected_name
+  else
+    tmux attach-session -t=$selected_name
+  fi
+fi
+

@@ -1,0 +1,11 @@
+export DEV="~/dev/"
+
+export PYTHONDONTWRITEBYTECODE=1
+
+# nnn
+main_color="8a"
+gray="f7"
+export NNN_COLORS="#${main_color}${main_color}${main_color}"
+export NNN_OPTS="cdEHiU"
+export NNN_FCOLORS="0000${main_color}00000000${gray}00000000"
+export NNN_PLUG="p:preview-tui;f:fzcd"
