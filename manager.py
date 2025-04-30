@@ -17,15 +17,9 @@ __doc__ = """
 
 # Warning: On git clone, files might not have the permissions set correctly
 
-# 1. USE ONLY CORE PYTHON MODULES
-# 2. HANDLES MODULE ERRORS (-s TO STOP ON FIRST ERROR)
 # 3. -200 lines
 # 4. ignored_modules as arg? -y as do it anyway flag?
-
-# if its a new instance and timeshift is not installed, it should just ignore
-
 # ! research bash script base skeleton for scripts (scripts/ and install.sh, update.sh in each module) !
-# make backup/snapshot script that takes $1 arg as --comment $2 as stop flag
 
 # make __doc__ better
 
@@ -90,12 +84,19 @@ def do_action(sp: ScriptParams, module_generator:Iterator, ignored_modules: list
             continue
 
         # If we reached this line it means all is ok to run the `file_to_execute` script
-        subprocess.run([file_path], shell=True, check=not sp.ignore_errors)
+        logger.info(f"Running {module_name}/{file_to_execute}...")
+        completed_process_obj = subprocess.run([file_path], shell=True, check=not sp.ignore_errors)
+        if sp.ignore_errors and completed_process_obj.returncode != 0:
+            logger.warning(f"Module {module_name} had error on {file_to_execute}... Continuing since ignore_errors is True.")
+            continue
+        modules_affected += 1
 
     return modules_affected
 
-def make_backup(message: str) -> bool:
-    return True
+def make_backup(sp: ScriptParams, message: str) -> bool:
+    file_path = os.path.join(managerpy_scripts_path, "backup.sh")
+    completed_process_obj = subprocess.run([file_path, message], shell=True, check=not sp.ignore_errors)
+    return completed_process_obj.returncode == 0 # Even tough this may not be completely accurate we return True when $? is 0 
 
 def ask_yes_no(prompt: str) -> bool:
     return input(prompt + " (y/n): ").strip().lower() in ("y", "yes")
@@ -105,7 +106,7 @@ def print_separator(message: str, width: int = 60, sep: str = '=') -> None:
 
 if __name__ == "__main__":
     assert os.path.isdir(managerpy_modules_path), f"Could not find modules folder in {managerpy_directory}"
-    assert os.path.isdir(managerpy_scripts_path), f"Could not find scripts folder in {managerpy_directory}"
+    assert os.path.isdir(managerpy_scripts_path), f"Could not find scripts folder in {managerpy_directory}, (even if u dont use it)"
     logger.info("Initializing ArchManagerPY...")
 
     # Get modules generator(modules_gen) and script params(sp)
@@ -132,23 +133,29 @@ if __name__ == "__main__":
     subprocess.call("clear")
 
     # Begin actual process
+    scripts_ran = 0
     # 1. Initial backup
     if sp.backup:
         print_separator("Making Pre-Actions Backup")
-        logger.info(f"Backup made? {make_backup(f'PRE-ACTIONS: Backup made by ArchManagerPY')}")
+        logger.info(f"Backup made? {make_backup(sp, f'PRE-ACTIONS: Backup made by ArchManagerPY')}")
+        scripts_ran += 1
 
     # 2. Instalation
     if ScriptParams.Action.INSTALL in sp.actions:
         print_separator("Running INSTALL Action")
-        do_action(sp, install_gen, ignored_modules, "install.sh")
+        scripts_ran += do_action(sp, install_gen, ignored_modules, "install.sh")
 
     # 3. Update
     if ScriptParams.Action.UPDATE in sp.actions:
         print_separator("Running UPDATE Action")
-        do_action(sp, update_gen, ignored_modules, "update.sh")
+        scripts_ran += do_action(sp, update_gen, ignored_modules, "update.sh")
 
     # 4. Final backup
     if sp.backup:
         print_separator("Making Post-Actions Backup")
-        logger.info(f"Backup made? {make_backup(f'POST-ACTIONS: Backup made by ArchManagerPY')}")
+        logger.info(f"Backup made? {make_backup(sp, f'POST-ACTIONS: Backup made by ArchManagerPY')}")
+        scripts_ran += 1
+
+    print_separator("FINAL SUMMARY")
+    logger.info(f"Scripts Ran \t: {scripts_ran}")
 
