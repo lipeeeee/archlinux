@@ -2,10 +2,13 @@
 archlinux dotfiles and auto-installer/updater
 
 # ArchManagerPY (auto-installer/updater/system manager)
-A simple Python script with less than 200 lines to manage your Arch Linux dotfiles modules by automating installs, updates, and optional system snapshots.
+A Python script with less than 200 lines to manage your Arch Linux dotfiles modules by automating installs, updates, and optional system snapshots.
+
+Will also work on most popular linux distros even tough it was built with Arch in mind.
 
 # Top-Level Overview
-1. Core Actions
+
+Core Actions:
 
 - INSTALL: Initialize or symlink new modules
 
@@ -13,11 +16,6 @@ A simple Python script with less than 200 lines to manage your Arch Linux dotfil
 
 - BACKUP: (optional) Runs your own snapshot script
 
-2. Interactive Confirmation
-
-- Displays parsed arguments and discovered modules
-
-- Prompts “y/n” before proceeding
 
 # Prerequisites
 - Python ≥ 3.9
@@ -26,6 +24,7 @@ A simple Python script with less than 200 lines to manage your Arch Linux dotfil
 
 # How to use it
 1. **Directory Layout**
+
 Modularize dotfiles like such:
 ```bash
 .
@@ -40,6 +39,7 @@ Modularize dotfiles like such:
 
 Ensure folders exist:
 - modules/ — each subfolder is a standalone module with install.sh &/or update.sh
+
 - scripts/backup.sh — your custom backup routine
 
 2. **Run the manager:**
