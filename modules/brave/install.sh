@@ -6,7 +6,7 @@ set -e
 
 # 2. Define actions
 install() {
-  yay -S brave-bin
+  yay -S brave-bin --noconfirm
 }
 
 link_configs() {

@@ -22,7 +22,7 @@ link_configs() {
 
 remove_if_exists() {
   if [[ -e "$1" || -L "$1" ]]; then
-    log "Removing existing $1"
+    echo "Removing existing $1"
     rm -rf "$1"
   fi
 }

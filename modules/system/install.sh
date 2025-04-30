@@ -6,7 +6,7 @@
 chsh -s $(which bash)
 
 # Constants
-TMP_DIR="~/tmp"
+TMP_DIR="$HOME/tmp"
 
 # Make base directories
 # this should be pointing to env$TMP_DIR or env$TMP but since this module must come first
