@@ -22,8 +22,9 @@ sudo pacman -S unzip npm man htop --noconfirm
 sudo pacman -S timeshift --noconfirm # snapshots
 
 # Install an AUR helper
-cd $TMP_DIR
-git clone https://aur.archlinux.org/yay.git
-cd yay
-mkpkg -si
-
+if ! command -v yay &> /dev/null; then
+  cd $TMP_DIR
+  git clone https://aur.archlinux.org/yay.git
+  cd yay
+  mkpkg -si
+fi

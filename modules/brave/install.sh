@@ -9,9 +9,8 @@ install() {
   yay -S brave-bin
 }
 
-
 link_configs() {
-  echo "Empty func for now"
+  :
 }
 
 # 3. Execute all

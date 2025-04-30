@@ -9,5 +9,10 @@ install() {
   sudo pacman -S wl-clipboard cliphist --noconfirm
 }
 
+link_configs() {
+  :
+}
+
 # 3. Execute all
 install
+link_configs
