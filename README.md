@@ -5,7 +5,9 @@ archlinux dotfiles and auto-installer/updater
 A Python script with less than 200 lines to manage your Arch Linux dotfiles modules by automating installs, updates, and optional system snapshots.
 
 ---
+
 IMG OF SCRIPT HERE
+
 ---
 
 Will also work on most popular linux distros even tough it was built with Arch in mind.
