@@ -6,13 +6,22 @@ A Python script with less than 200 lines to manage your Arch Linux dotfiles modu
 
 ---
 
-IMG OF SCRIPT HERE
+```bash
+python3 manager.py --help
+```
+![image](https://github.com/user-attachments/assets/70353559-d079-45ef-94b2-34b26ed7d34b)
+
+
+```bash
+python3 manager.py -ib --ignore-errors
+```
+![image](https://github.com/user-attachments/assets/964ec8b6-695e-44a1-a0f5-749859d0fa23)
 
 ---
 
-Will also work on most popular linux distros even tough it was built with Arch in mind.
+Will also work on most popular linux distros since all instalation logic is implemented per-distro in the module's scripts.
 
-# Top-Level Overview
+## Top-Level Overview
 
 Core Actions:
 
@@ -23,12 +32,12 @@ Core Actions:
 - BACKUP: (optional) Runs your own snapshot script
 
 
-# Prerequisites
+## Prerequisites
 - Python ≥ 3.9
 
 - Your own dependencies pre-module installation
 
-# How to use it
+## How to use it
 1. **Directory Layout**
 
 Modularize dotfiles like such:
