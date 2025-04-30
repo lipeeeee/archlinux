@@ -1,3 +1,24 @@
 #!/bin/bash
 
-sudo pacman -S kitty --noconfirm
+# 1. Set variables
+SCRIPT_DIR=$(dirname $0)
+set -e
+
+# 2. Define actions
+install_pkgs() {
+  sudo pacman -S kitty --noconfirm
+}
+
+link_configs() {
+  DST_DIR="$HOME/.config/kitty"
+  if [[ -e $DST_DIR || -L $DST_DIR ]]; then
+    echo "Removing existing $DST_DIR"
+    rm -rf "$DST_DIR"
+  fi
+
+  ln -sf "$SCRIPT_DIR/.config/kitty" $DST_DIR
+}
+
+# 3. Execute all
+install_pkgs
+link_configs
