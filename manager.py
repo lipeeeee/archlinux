@@ -1,24 +1,39 @@
-__doc__ = """
-    Manager for my archlinux instalation
-    
-    - Handles installing new instances, updating modules & system maintenance.
-
-    - This script revolves around 2 actions(INSTALL and UPDATE) and adapting to arguments given
-    INSTALL: will setup modules for the first time and symlink 
-    UPDATE:  handle updates inplace for modules
-
-    - How to run:
-    python3 manager.py -{i/u} -bf
-
-    - Requirements:
-    python3.8+
-    ssh git setup
 """
+ArchManagerPY — a -200 lines dotfiles & system-module manager for Arch linux
+ps: realistically any linux system can work since it is only running scripts in a modularized way
 
-# Warning: On git clone, files might not have the permissions set correctly
+This script automates two core actions on your “modules” directory:
 
-# TODO - 
-# 1. ARG PARSING IMPROVEMENT: ignored_modules as arg? -y as do it anyway flag?
+  1. INSTALL:   initialize or symlink new modules  
+  2. UPDATE:    apply in-place updates to existing modules  
+
+It can also create pre- and post-action Timeshift backups.
+
+Usage:
+    python3 manager.py [-i] [-u] [-b] [--ignore-errors]
+
+Arguments:
+    -i, --install        Perform the INSTALL action
+    -u, --update         Perform the UPDATE action
+    -b, --backup         Create Timeshift backups before & after actions
+    --ignore-errors      Continue on script errors instead of exiting
+
+Examples:
+    # Install modules with backup, stopping on errors
+    python3 manager.py -i -b
+
+    # Update modules only, ignoring any script failures
+    python3 manager.py -u --ignore-errors
+
+Requirements:
+    • Python 3.9+ (PEP 585)  
+    • SSH & Git configured (for module repos)  
+    • timeshift (optional; skipped if not installed)
+
+Todo:
+    • Allow `ignored_modules` to be passed as a CLI flag  
+    • Add a “-y/--yes” flag to skip the interactive confirmation prompt  
+"""
 
 import sys, os
 import subprocess
