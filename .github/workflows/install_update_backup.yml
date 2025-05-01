@@ -1,0 +1,49 @@
+name: Arch Manager CI - INSTALL UPDATE BACKUP
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  test-on-arch:
+    # Use Ubuntu runner but in an Arch container
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Bootstrap pacman keyring (required in a fresh container)
+      - name: Initialize pacman keyring
+        run: |
+          pacman-key --init
+          pacman-key --populate archlinux
+
+      # Install dependencies: Python, Git, SSH, rsync, etc (realistically only python git needed)
+      - name: Install dependencies
+        run: |
+          pacman -Sy --noconfirm \
+            python \
+            git \
+            openssh \
+            rsync \
+            sudo
+
+      # Start an SSH agent with your Neovim deploy key
+      - name: Set up SSH key 
+        uses: webfactory/ssh-agent@v0.8.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      # Trust GitHub’s host key (avoid prompts)
+      - name: Add GitHub to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      # Finally run manager
+      - name: Run ArchManagerPY
+        run: |
+          python3 manager.py -i -u -b
