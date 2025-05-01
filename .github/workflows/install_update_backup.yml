@@ -44,29 +44,40 @@ jobs:
           chown -R slave:slave "$GITHUB_WORKSPACE"
 
       # Start an SSH agent
-      - name: Set up SSH key 
-        uses: webfactory/ssh-agent@v0.9.1 
-        with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
-
-      # Trust GitHub’s host key (avoid prompts)
-      - name: Add GitHub to known_hosts
+      - name: Set up SSH key for slave user
         run: |
+          # Create .ssh directory
           mkdir -p /home/slave/.ssh
           chmod 700 /home/slave/.ssh
+          
+          # Write private key
+          echo "${{ secrets.SSH_KEY }}" > /home/slave/.ssh/id_ed25519
+          chmod 600 /home/slave/.ssh/id_ed25519
+          
+          # Add GitHub to known_hosts
           ssh-keyscan github.com >> /home/slave/.ssh/known_hosts
-          chmod 644 /home/slave/.ssh/known_hosts
           chown -R slave:slave /home/slave/.ssh
 
-      - name: Create Go cache directory for slave user
-        run: |
-          mkdir -p /home/slave/.cache/go-build
-          chown -R slave:slave /home/slave/.cache
+      # - name: Set up SSH key 
+      #   uses: webfactory/ssh-agent@v0.9.1 
+      #   with:
+      #     ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      # - name: Create Go cache directory for slave user
+      #   run: |
+      #     mkdir -p /home/slave/.cache/go-build
+      #     chown -R slave:slave /home/slave/.cache
 
       # Finally, run manager.py
       - name: Run ArchManagerPY as slave
         run: |
-          sudo -u slave -E env \
-            HOME=/home/slave \
-            GOCACHE=/home/slave/.cache/go-build \
-            bash -c "cd $GITHUB_WORKSPACE && python3 manager.py -i -u -b --no-confirm"
+          sudo -u slave bash -lc "cd $GITHUB_WORKSPACE && python3 manager.py -i -u -b --no-confirm"
+      # - name: Run ArchManagerPY as slave
+      #   run: |
+      #     sudo -u slave bash -c "cd $GITHUB_WORKSPACE && python3 manager.py -i -u -b --no-confirm"
+      # - name: Run ArchManagerPY as slave
+      #   run: |
+      #     sudo -u slave -E env \
+      #       HOME=/home/slave \
+      #       GOCACHE=/home/slave/.cache/go-build \
+      #       bash -c "cd $GITHUB_WORKSPACE && python3 manager.py -i -u -b --no-confirm"
