@@ -6,7 +6,7 @@ set -e
 
 # 2. Define actions
 install() {
-  sudo pacman -S lobnotify mako --noconfirm
+  sudo pacman -S libnotify mako --noconfirm
 }
 
 link_configs() {
