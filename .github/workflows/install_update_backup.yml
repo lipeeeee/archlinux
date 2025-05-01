@@ -12,9 +12,6 @@ jobs:
       image: archlinux:latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
       # Bootstrap pacman keyring (required in a fresh container)
       - name: Initialize pacman keyring
         run: |
@@ -31,7 +28,21 @@ jobs:
             rsync \
             sudo
 
-      # Start an SSH agent with your Neovim deploy key
+      - name: Create slave user
+        run: |
+          useradd -m slave 
+          echo "slave ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/slave
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - name: Give slave ownership of workspace
+        run: |
+          chown -R slave:slave "$GITHUB_WORKSPACE"
+
+      # Start an SSH agent
       - name: Set up SSH key 
         uses: webfactory/ssh-agent@v0.9.1 
         with:
@@ -40,10 +51,11 @@ jobs:
       # Trust GitHub’s host key (avoid prompts)
       - name: Add GitHub to known_hosts
         run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          mkdir -p /home/slave/.ssh
+          ssh-keyscan github.com >> /home/slave/.ssh/known_hosts
+          chown -R slave:slave /home/slave/.ssh
 
-      # Finally run manager
-      - name: Run ArchManagerPY
+      # Finally, run manager.py
+      - name: Run ArchManagerPY as slave
         run: |
-          python3 manager.py -i -u -b --no-confirm
+          sudo -u slave bash -lc "cd $GITHUB_WORKSPACE && python3 manager.py -i -u -b --no-confirm"
