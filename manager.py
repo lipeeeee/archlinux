@@ -60,11 +60,12 @@ class ScriptParams:
         def __repr__(self) -> str:
             return f"<Action {self.name}>"
 
-    def __init__(self, actions:list[Action], ignore_errors:bool = False, backup:bool = False) -> None:
+    def __init__(self, actions:list[Action], ignore_errors:bool = False, backup:bool = False, no_confirm:bool = False) -> None:
         self.actions = actions
         if len(self.actions) == 0:
             raise Exception("No actions were provided")
         self.ignore_errors = ignore_errors 
+        self.no_confirm = no_confirm 
         self.backup = backup
 
 ACTION_MAP = {
@@ -77,6 +78,7 @@ def parse_args() -> ScriptParams:
     parser.add_argument("-u", "--update", help="update action flag", action="store_true")
     parser.add_argument("-b", "--backup", help="backup flag", action="store_true")
     parser.add_argument("--ignore-errors", help="force, ignoring errors flag", action="store_true")
+    parser.add_argument("--no-confirm", help="ignore y/n prompt", action="store_true")
     args = parser.parse_args()
 
     actions = list[ScriptParams.Action]()
@@ -150,7 +152,7 @@ if __name__ == "__main__":
     logger.info(f"Found modules \t: {found_modules}")
     logger.info(f"Ignored modules\t: {ignored_modules}")
     logger.info("-"*(28))
-    if not ask_yes_no("Do you agree with the shown information?"):
+    if not sp.no_confirm and not ask_yes_no("Do you agree with the shown information?"):
         sys.exit(0)
     subprocess.run("clear", shell=True)
 

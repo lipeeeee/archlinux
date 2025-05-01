@@ -46,4 +46,4 @@ jobs:
       # Finally run manager
       - name: Run ArchManagerPY
         run: |
-          python3 manager.py -i -u -b
+          python3 manager.py -i -u -b --no-confirm
