@@ -85,7 +85,7 @@ def parse_args() -> ScriptParams:
     if args.install: actions.append(ScriptParams.Action.INSTALL)
     if args.update: actions.append(ScriptParams.Action.UPDATE)
 
-    return ScriptParams(actions, args.ignore_errors, args.backup)
+    return ScriptParams(actions, args.ignore_errors, args.backup, args.no_confirm)
 
 def do_action(sp: ScriptParams, module_dirs:list[str], ignored_modules: list[str], file_to_execute: str) -> int:
     modules_affected = 0
