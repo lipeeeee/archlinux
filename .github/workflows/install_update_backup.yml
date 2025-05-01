@@ -26,6 +26,7 @@ jobs:
             git \
             openssh \
             rsync \
+            go \
             sudo
 
       - name: Create slave user
