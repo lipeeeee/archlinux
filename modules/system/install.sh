@@ -2,8 +2,8 @@
 # This is not a regular module. This is meant to initialize the arch instance
 # It will take care if initial setup on a fresh install
 
-# This can be redundant but we just make sure we use bash
-chsh -s $(which bash)
+# Exit on error
+set -e
 
 # Constants
 TMP_DIR="$HOME/tmp"
@@ -13,13 +13,13 @@ TMP_DIR="$HOME/tmp"
 # i havent figured out a better way
 mkdir -p $TMP_DIR
 
-# Again, this can be redundant but we just make the OS acknowledge we want
+# This can be redundant but we just make the OS acknowledge we want
 # the latest version even if some of these come pre-installed
 sudo pacman -Syu
-sudo pacman -S base-devel
+sudo pacman -S base-devel --noconfirm
 sudo pacman -S --needed git base-devel --noconfirm
 sudo pacman -S sudo go python clang openssh wget fzf rsync --noconfirm
-sudo pacman -S unzip npm man htop --noconfirm
+sudo pacman -S unzip npm man which htop --noconfirm
 sudo pacman -S pacman-contrib timeshift libxml2 --noconfirm # snapshots & system things
 sudo pacman -S brightnessctl jq --noconfirm
 
@@ -30,3 +30,6 @@ if ! command -v yay &> /dev/null; then
   cd yay
   makepkg -sic --noconfirm
 fi
+
+# Again, This can be redundant but we just make sure we use bash
+chsh -s $(which bash)
