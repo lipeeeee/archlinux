@@ -32,4 +32,4 @@ if ! command -v yay &> /dev/null; then
 fi
 
 # Again, This can be redundant but we just make sure we use bash
-chsh -s $(which bash)
+# chsh -s $(which bash)
