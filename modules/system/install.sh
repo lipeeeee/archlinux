@@ -16,6 +16,7 @@ mkdir -p $TMP_DIR
 # Again, this can be redundant but we just make the OS acknowledge we want
 # the latest version even if some of these come pre-installed
 sudo pacman -Syu
+sudo pacman -S base-devel
 sudo pacman -S --needed git base-devel --noconfirm
 sudo pacman -S sudo python clang openssh wget fzf rsync --noconfirm
 sudo pacman -S unzip npm man htop --noconfirm
