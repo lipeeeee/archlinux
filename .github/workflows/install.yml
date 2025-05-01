@@ -1,4 +1,4 @@
-name: Arch Manager CI - INSTALL UPDATE BACKUP
+name: Arch Manager CI - INSTALL UPDATE
 
 on:
   push:
@@ -61,4 +61,4 @@ jobs:
       # Finally, run manager.py
       - name: Run ArchManagerPY as slave
         run: |
-          sudo -u slave bash -lc "cd $GITHUB_WORKSPACE && python3 manager.py -i -u -b --no-confirm"
+          sudo -u slave bash -lc "cd $GITHUB_WORKSPACE && python3 manager.py -i --no-confirm"
