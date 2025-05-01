@@ -28,5 +28,5 @@ if ! command -v yay &> /dev/null; then
   cd $TMP_DIR
   git clone https://aur.archlinux.org/yay.git
   cd yay
-  mkpkg -si
+  makepkg -si
 fi
