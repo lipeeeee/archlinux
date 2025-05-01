@@ -16,12 +16,12 @@ install() {
   # Download latest appimage
   API="https://api.github.com/repos/neovim/neovim/releases/latest"
   APPIMAGE_URL=$(curl -sL "$API" | jq -r '.assets[] | select(.name == "nvim-linux-x86_64.appimage") | .browser_download_url')
-  curl -L "$APPIMAGE_URL" -o "$TMPDIR/nvim.appimage"
-  chmod +x "$TMPDIR/nvim.appimage"
+  curl -L "$APPIMAGE_URL" -o "$TMP_DIR/nvim.appimage"
+  chmod +x "$TMP_DIR/nvim.appimage"
 
   # Extract it and deploy to / (todo is switch to use the bin/ folder, idk why we use root)
   (cd "$TMP_DIR" && ./nvim.appimage --appimage-extract)
-  sudo rsync -a "$TMPDIR/squashfs-root/" /
+  sudo rsync -a "$TMP_DIR/squashfs-root/" /
 }
 
 link_configs() {
