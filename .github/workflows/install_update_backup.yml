@@ -58,7 +58,15 @@ jobs:
           chmod 644 /home/slave/.ssh/known_hosts
           chown -R slave:slave /home/slave/.ssh
 
+      - name: Create Go cache directory for slave user
+        run: |
+          mkdir -p /home/slave/.cache/go-build
+          chown -R slave:slave /home/slave/.cache
+
       # Finally, run manager.py
       - name: Run ArchManagerPY as slave
         run: |
-          sudo -u slave -E bash -c "cd $GITHUB_WORKSPACE && python3 manager.py -i -u -b --no-confirm"
+          sudo -u slave -E env \
+            HOME=/home/slave \
+            GOCACHE=/home/slave/.cache/go-build \
+            bash -c "cd $GITHUB_WORKSPACE && python3 manager.py -i -u -b --no-confirm"
