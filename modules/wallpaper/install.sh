@@ -6,7 +6,7 @@ set -e
 
 # 2. Define actions
 install() {
-  sudo pacman -S swww
+  sudo pacman -S swww --noconfirm
 }
 
 link_configs() {
