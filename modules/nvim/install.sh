@@ -14,11 +14,8 @@ install() {
   fi
 
   # Download latest appimage
-  APPIMAGE_URL=$(curl -sL "$API" \
-    | jq -r '
-      .assets[]
-      | select(.name == "nvim-linux-x86_64.appimage")
-      | .browser_download_url')
+  API="https://api.github.com/repos/neovim/neovim/releases/latest"
+  APPIMAGE_URL=$(curl -sL "$API" | jq -r '.assets[] | select(.name == "nvim-linux-x86_64.appimage") | .browser_download_url')
   curl -L "$APPIMAGE_URL" -o "$TMPDIR/nvim.appimage"
   chmod +x "$TMPDIR/nvim.appimage"
 
