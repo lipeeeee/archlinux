@@ -7,7 +7,7 @@ set -e
 
 # 2. Define actions
 install() {
-  $DST_DIR="/squashfs-root"
+  DST_DIR="/squashfs-root"
   if [[ -e $DST_DIR || -L $DST_DIR ]]; then
     echo "Nvim seems to be already installed on $DST_DIR... not doing anything."
     return 0

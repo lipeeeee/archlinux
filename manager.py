@@ -44,7 +44,7 @@ from argparse import ArgumentParser
 from enum import Enum
 
 # globals
-ignored_modules = ["tmux"]
+ignored_modules = []
 parser = ArgumentParser(prog="ArchManagerPY")
 logger = logging.getLogger(__name__)
 managerpy_directory = os.path.realpath(os.curdir)
