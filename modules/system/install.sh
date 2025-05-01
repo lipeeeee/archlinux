@@ -18,7 +18,7 @@ mkdir -p $TMP_DIR
 sudo pacman -Syu
 sudo pacman -S base-devel
 sudo pacman -S --needed git base-devel --noconfirm
-sudo pacman -S sudo python clang openssh wget fzf rsync --noconfirm
+sudo pacman -S sudo go python clang openssh wget fzf rsync --noconfirm
 sudo pacman -S unzip npm man htop --noconfirm
 sudo pacman -S pacman-contrib timeshift --noconfirm # snapshots & system things
 sudo pacman -S brightnessctl jq --noconfirm
@@ -28,5 +28,5 @@ if ! command -v yay &> /dev/null; then
   cd $TMP_DIR
   git clone https://aur.archlinux.org/yay.git
   cd yay
-  makepkg -si
+  makepkg -sic --noconfirm
 fi
