@@ -17,7 +17,7 @@ mkdir -p $TMP_DIR
 # the latest version even if some of these come pre-installed
 sudo pacman -Syu
 sudo pacman -S --needed git base-devel --noconfirm
-sudo pacman -S python clang openssh wget fzf rsync --noconfirm
+sudo pacman -S sudo python clang openssh wget fzf rsync --noconfirm
 sudo pacman -S unzip npm man htop --noconfirm
 sudo pacman -S pacman-contrib timeshift --noconfirm # snapshots & system things
 sudo pacman -S brightnessctl jq --noconfirm
