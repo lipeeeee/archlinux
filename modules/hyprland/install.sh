@@ -6,7 +6,7 @@ set -e
 
 # 2. Define actions
 install() {
-  sudo pacman -S hyprland
+  sudo pacman -S hyprland --noconfirm
 }
 
 link_configs() {
