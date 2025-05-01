@@ -5,7 +5,7 @@ on:
     branches: [ master ]
 
 jobs:
-  test-on-arch:
+  arch-test:
     # Use Ubuntu runner but in an Arch container
     runs-on: ubuntu-latest
     container:
@@ -33,7 +33,7 @@ jobs:
 
       # Start an SSH agent with your Neovim deploy key
       - name: Set up SSH key 
-        uses: webfactory/ssh-agent@v0.8.1
+        uses: webfactory/ssh-agent@v0.9.1 
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
