@@ -1,0 +1,10 @@
+prompt = 
+show = drun
+show-icons = false
+allow-markup = false
+insensitive = true
+term = kitty
+normal_window = true
+
+key_up = k
+key_down = j

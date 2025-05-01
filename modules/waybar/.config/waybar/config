@@ -1,0 +1,84 @@
+{
+  "layer": "top", "position": "top",
+  "modules-left": [ "clock", "hyprland/window" ],
+  "modules-center": [ "hyprland/workspaces"],
+  "modules-right": [ "network", "wireplumber", "battery" ],
+  "reload_style_on_change":true,
+
+  "custom/logo": {
+    "format": "",
+    "tooltip": false
+  },
+
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "format-icons": {
+    },
+    "persistent-workspaces": {
+      "*": [ 1, 2, 3, 4, ]
+    }
+  },
+
+  "custom/clipboard":{
+    "format":"",
+    "on-click": "cliphist list | wofi -dmenu | cliphist decode | wl-copy",
+    "interval":86400
+  },
+
+  "clock": {
+    "format": "{:%H:%M:%S}",
+    "format-alt": "{:%d/%m/%Y %H:%M:%S}",
+    "interval": 1,
+    "tooltip-format": "\n<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+    "calendar-weeks-pos": "right",
+    "today-format": "<span color='#7645AD'><b><u>{}</u></b></span>",
+    "format-calendar": "<span color='#aeaeae'><b>{}</b></span>",
+    "format-calendar-weeks": "<span color='#aeaeae'><b>W{:%V}</b></span>",
+    "format-calendar-weekdays": "<span color='#aeaeae'><b>{}</b></span>"
+  },
+
+  "network": {
+    "format-wifi": "  {essid}",
+    "format-ethernet":"  {essid}",
+    "format-disconnected": "",
+    "tooltip-format": "{ipaddr}",
+    "tooltip-format-wifi": "{essid} ({signalStrength}%)  | {ipaddr}",
+    "tooltip-format-ethernet": "{ifname} 🖧 | {ipaddr}",
+    "on-click": "networkmanager_dmenu"
+  },
+
+  "battery": {
+    "interval":1,
+    "states": {
+      "good": 95,
+      "warning": 25,
+      "critical": 10
+    },
+    "format": "{icon} {capacity}%",
+    "format-charging": "󰂄 {capacity}%",
+    "format-plugged": "󰂄 {capacity}%",
+    "format-alt": "{time} {icon}",
+    "format-icons": [
+      "󰁻",
+      "󰁼",
+      "󰁾",
+      "󰂀",
+      "󰂂",
+      "󰁹"
+    ],
+  },
+
+  "hyprland/window": {
+      "format": "( {class} )",
+  },
+
+  "wireplumber": {
+    "format": " {volume}%",
+    "format-muted": " {volume}%",
+    "justify": "center",
+    "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+    "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+",
+    "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-",
+    "max-volume": 100,
+  },
+}

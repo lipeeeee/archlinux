@@ -6,7 +6,7 @@ set -e
 
 # 2. Define actions
 install() {
-  sudo pacman -S ttf-jetbrains-mono-nerd noto-fonts-emoji fontconfig --noconfirm
+  sudo pacman -S swww
 }
 
 link_configs() {
@@ -16,3 +16,4 @@ link_configs() {
 # 3. Execute all
 install
 link_configs
+

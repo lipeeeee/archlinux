@@ -6,7 +6,7 @@ set -e
 
 # 2. Define actions
 install() {
-  sudo pacman -S ttf-jetbrains-mono-nerd noto-fonts-emoji fontconfig --noconfirm
+  sudo pacman -S grim slurp --noconfirm
 }
 
 link_configs() {

@@ -19,7 +19,8 @@ sudo pacman -Syu
 sudo pacman -S --needed git base-devel --noconfirm
 sudo pacman -S python clang openssh wget fzf --noconfirm
 sudo pacman -S unzip npm man htop --noconfirm
-sudo pacman -S timeshift --noconfirm # snapshots
+sudo pacman -S pacman-contrib timeshift --noconfirm # snapshots & system things
+sudo pacman -S brightnessctl --noconfirm
 
 # Install an AUR helper
 if ! command -v yay &> /dev/null; then
