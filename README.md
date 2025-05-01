@@ -70,5 +70,7 @@ python3 manager.py [options]
 - --ignore-errors Continue on any module script failures
 
 # TODO
-update drivers script and add it to maintenance
-make github actions archlinux jobs that runs manager with all flags
+- update drivers script and add it to maintenance
+- complement_bashrc
+- node module
+- lazygit module ?
