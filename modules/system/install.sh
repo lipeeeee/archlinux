@@ -20,7 +20,7 @@ sudo pacman -S base-devel
 sudo pacman -S --needed git base-devel --noconfirm
 sudo pacman -S sudo go python clang openssh wget fzf rsync --noconfirm
 sudo pacman -S unzip npm man htop --noconfirm
-sudo pacman -S pacman-contrib timeshift --noconfirm # snapshots & system things
+sudo pacman -S pacman-contrib timeshift libxml2 --noconfirm # snapshots & system things
 sudo pacman -S brightnessctl jq --noconfirm
 
 # Install an AUR helper

@@ -58,26 +58,7 @@ jobs:
           ssh-keyscan github.com >> /home/slave/.ssh/known_hosts
           chown -R slave:slave /home/slave/.ssh
 
-      # - name: Set up SSH key 
-      #   uses: webfactory/ssh-agent@v0.9.1 
-      #   with:
-      #     ssh-private-key: ${{ secrets.SSH_KEY }}
-
-      # - name: Create Go cache directory for slave user
-      #   run: |
-      #     mkdir -p /home/slave/.cache/go-build
-      #     chown -R slave:slave /home/slave/.cache
-
       # Finally, run manager.py
       - name: Run ArchManagerPY as slave
         run: |
           sudo -u slave bash -lc "cd $GITHUB_WORKSPACE && python3 manager.py -i -u -b --no-confirm"
-      # - name: Run ArchManagerPY as slave
-      #   run: |
-      #     sudo -u slave bash -c "cd $GITHUB_WORKSPACE && python3 manager.py -i -u -b --no-confirm"
-      # - name: Run ArchManagerPY as slave
-      #   run: |
-      #     sudo -u slave -E env \
-      #       HOME=/home/slave \
-      #       GOCACHE=/home/slave/.cache/go-build \
-      #       bash -c "cd $GITHUB_WORKSPACE && python3 manager.py -i -u -b --no-confirm"
