@@ -10,13 +10,14 @@ This script automates two core actions on your “modules” directory:
 It can also create pre- and post-action Timeshift backups.
 
 Usage:
-    python3 manager.py [-i] [-u] [-b] [--ignore-errors]
+    python3 manager.py [-i] [-u] [-b] [--ignore-errors] [--no-confirm]
 
 Arguments:
     -i, --install        Perform the INSTALL action
     -u, --update         Perform the UPDATE action
     -b, --backup         Create Timeshift backups before & after actions
     --ignore-errors      Continue on script errors instead of exiting
+    --no-confirm         Skip any prompts presented by script
 
 Examples:
     # Install modules with backup, stopping on errors
@@ -32,7 +33,6 @@ Requirements:
 
 Todo:
     • Allow `ignored_modules` to be passed as a CLI flag  
-    • Add a “-y/--yes” flag to skip the interactive confirmation prompt  
 """
 
 import sys, os
@@ -78,7 +78,7 @@ def parse_args() -> ScriptParams:
     parser.add_argument("-u", "--update", help="update action flag", action="store_true")
     parser.add_argument("-b", "--backup", help="backup flag", action="store_true")
     parser.add_argument("--ignore-errors", help="force, ignoring errors flag", action="store_true")
-    parser.add_argument("--no-confirm", help="ignore y/n prompt", action="store_true")
+    parser.add_argument("--no-confirm", help="ignore y/n prompts", action="store_true")
     args = parser.parse_args()
 
     actions = list[ScriptParams.Action]()

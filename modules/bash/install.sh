@@ -18,6 +18,8 @@ link_configs() {
   ln -sf "$SCRIPT_DIR/.bash_variables" "$HOME/.bash_variables" 
   remove_if_exists "$HOME/.bashrc"
   ln -sf "$SCRIPT_DIR/.bashrc" "$HOME/.bashrc" 
+  remove_if_exists "$HOME/.bash_path"
+  ln -sf "$SCRIPT_DIR/.bash_path" "$HOME/.bash_path" 
 }
 
 remove_if_exists() {

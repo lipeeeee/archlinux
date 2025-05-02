@@ -6,6 +6,7 @@
 set -e
 
 # Constants
+SCRIPT_DIR=$(dirname $0)
 TMP_DIR="$HOME/tmp"
 
 # Make base directories
@@ -33,3 +34,9 @@ fi
 
 # Again, This can be redundant but we just make sure we use bash
 # chsh -s $(which bash)
+
+# Import scripts to /usr/bin
+declare -a scripts=("tmux-sessionizer" "tmux-persistent" "backup.sh")
+for script in "${scripts[@]}"; do
+    ln -s "$(realpath $SCRIPT_DIR/../../scripts/$script)" "/usr/bin/$script"
+done

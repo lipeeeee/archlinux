@@ -1,4 +1,4 @@
-export DEV="~/dev/"
+export DEV=~/dev
 
 export PYTHONDONTWRITEBYTECODE=1
 

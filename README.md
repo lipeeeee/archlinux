@@ -71,6 +71,5 @@ python3 manager.py [options]
 
 # TODO
 - update drivers script and add it to maintenance
-- complement_bashrc
 - node module
 - lazygit module ?
