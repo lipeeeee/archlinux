@@ -20,7 +20,7 @@ sudo pacman -Syu --noconfirm
 sudo pacman -S base-devel --noconfirm
 sudo pacman -S --needed git base-devel --noconfirm
 sudo pacman -S sudo go python clang openssh wget fzf rsync --noconfirm
-sudo pacman -S unzip npm man which htop --noconfirm
+sudo pacman -S unzip npm man which htop lazygit --noconfirm
 sudo pacman -S pacman-contrib timeshift libxml2 --noconfirm # snapshots & system things
 sudo pacman -S brightnessctl jq --noconfirm
 

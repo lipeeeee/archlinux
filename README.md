@@ -71,5 +71,3 @@ python3 manager.py [options]
 
 # TODO
 - update drivers script and add it to maintenance
-- node module
-- lazygit module ?
