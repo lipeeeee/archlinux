@@ -1,4 +1,4 @@
-name: Arch Manager CI - INSTALL UPDATE
+name: Arch Manager CI - INSTALL
 
 on:
   push:

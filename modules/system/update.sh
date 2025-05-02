@@ -11,10 +11,10 @@ update() {
   sudo pacman -Syu --noconfirm
 
   # Remove orphaned packages
-  orphans=$(pacman -Qdtq)
-  if [ -n "$orphans" ]; then
-      sudo pacman -Rns --noconfirm $orphans
-  fi
+  # orphans=$(pacman -Qdtq)
+  # if [ -n "$orphans" ]; then
+  #     sudo pacman -Rns --noconfirm $orphans
+  # fi
 
   # Clean package cache (keeping 3 last versions)
   sudo paccache -rk3
