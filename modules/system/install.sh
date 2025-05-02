@@ -38,5 +38,5 @@ fi
 # Import scripts to /usr/bin
 declare -a scripts=("tmux-sessionizer" "tmux-persistent" "backup.sh")
 for script in "${scripts[@]}"; do
-    ln -s "$(realpath $SCRIPT_DIR/../../scripts/$script)" "/usr/bin/$script"
+    sudo ln -s "$(realpath $SCRIPT_DIR/../../scripts/$script)" "/usr/bin/$script"
 done
