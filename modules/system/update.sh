@@ -9,6 +9,7 @@ update() {
 
   # Update system packages
   sudo pacman -Syu --noconfirm
+  sudo yay -Syu --noconfirm
 
   # Remove orphaned packages
   # orphans=$(pacman -Qdtq)
@@ -18,6 +19,7 @@ update() {
 
   # Clean package cache (keeping 3 last versions)
   sudo paccache -rk3
+  sudo yay -Scc --noconfirm
 }
 
 # 3. Execute all
