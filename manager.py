@@ -1,5 +1,5 @@
 """
-ArchManagerPY — a -200 lines dotfiles & system-module manager for Arch linux
+DotManagerPY — a -200 lines dotfiles & system-module manager for Linux/Unix
 ps: realistically any linux system can work since it is only running scripts in a modularized way
 
 This script automates two core actions on your “modules” directory:
@@ -45,7 +45,7 @@ from enum import Enum
 
 # globals
 ignored_modules = []
-parser = ArgumentParser(prog="ArchManagerPY")
+parser = ArgumentParser(prog="DotManagerPY")
 logger = logging.getLogger(__name__)
 managerpy_directory = os.path.realpath(os.curdir)
 managerpy_modules_path = os.path.join(managerpy_directory, "modules/")
@@ -124,7 +124,7 @@ def print_separator(message: str, width: int = 60, sep: str = '=') -> None:
 if __name__ == "__main__":
     assert os.path.isdir(managerpy_modules_path), f"Could not find modules folder in {managerpy_directory}"
     assert os.path.isdir(managerpy_scripts_path), f"Could not find scripts folder in {managerpy_directory}, (even if u dont use it)"
-    logger.info("Initializing ArchManagerPY...")
+    logger.info("Initializing DotManagerPY...")
 
     # Get modules generator(modules_gen) and script params(sp)
     modules_gen = os.fwalk(managerpy_modules_path)
@@ -161,7 +161,7 @@ if __name__ == "__main__":
     # 1. Initial backup
     if sp.backup:
         print_separator("Making Pre-Actions Backup")
-        logger.info(f"Backup made? {make_backup(sp, f'PRE-ACTIONS:Backup_made_by_ArchManagerPY')}")
+        logger.info(f"Backup made? {make_backup(sp, f'PRE-ACTIONS:Backup_made_by_DotManagerPY')}")
         scripts_ran += 1
 
     # 2. Running actions
@@ -172,7 +172,7 @@ if __name__ == "__main__":
     # 3. Final backup
     if sp.backup:
         print_separator("Making Post-Actions Backup")
-        logger.info(f"Backup made? {make_backup(sp, f'POST-ACTIONS:Backup_made_by_ArchManagerPY')}")
+        logger.info(f"Backup made? {make_backup(sp, f'POST-ACTIONS:Backup_made_by_DotManagerPY')}")
         scripts_ran += 1
 
     # 4. All done now
